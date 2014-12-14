@@ -108,9 +108,10 @@ class OrcaGeneral(object):
 class OrcaAnimal(object):
 
     def __init__(self, nix_file, session_id):
-        if not nix_file.has_section(session_id):
-            raise Exception('Invalid session_id')
-        s = nix_file.sections[session_id]
+        try:
+            s = nix_file.sections[session_id]
+        except:
+            raise Exception('Invalid session ID.')
         self.__section = s.create_section('Animal', 'orca.animal')
 
     @property
@@ -189,9 +190,10 @@ class OrcaAnimal(object):
 class OrcaDevice(object):
 
     def __init__(self, nix_file, session_id):
-        if not nix_file.has_section(session_id):
-            raise Exception('Invalid session_id')
-        s = nix_file.sections[session_id]
+        try:
+            s = nix_file.sections[session_id]
+        except:
+            raise Exception('Invalid session ID.')
         self.__section = s.create_section('Device', 'orca.device')
 
     @property
@@ -244,15 +246,19 @@ class OrcaDevice(object):
 
     @property
     def attributes(self):
-        if self.__section.has_section('attributes'):
-            return self.__section.sections['attributes'].props
-        else:
-            return None
+        try:
+            attribs = self.__section.sections['attributes'].props
+        except:
+            attribs = None
+        return attribs
 
     @attributes.setter
     def attributes(self, values):
         if isinstance(values, dict):
-            del self.__section.sections['attributes']
+            try:
+                del self.__section.sections['attributes']
+            except:
+                pass
             attr = self.__section.create_section('attributes', 'orca.device.attributes')
             for a in values.items():
                 attr[a[0]] = a[1]
