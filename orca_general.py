@@ -91,22 +91,18 @@ class OrcaGeneral(object):
         return self.__animal
 
     @animal.setter
-    def animal(self, animal):
-        if isinstance(animal, OrcaAnimal.__class__):
-            self.__animal = animal
-        else:
-            raise Exception('Animal parameter must be of type OrcaAnimal')
+    def animal(self, animal_id):
+        self.__animal = OrcaAnimal(self.__nix_file, self.session_id)
+        self.__animal.animal_id = animal_id
 
     @property
     def device(self):
         return self.__device
 
     @device.setter
-    def device(self, device):
-        if isinstance(device, OrcaDevice.__class__):
-            self.__device = device
-        else:
-            raise Exception('Device parameter must be of type OrcaDevice')
+    def device(self, model):
+        self.__device = OrcaDevice(self.__nix_file, self.session_id)
+        self.__device.model= model
 
 
 class OrcaAnimal(object):
