@@ -73,6 +73,10 @@ class OrcaFile(object):
         if name in self.__epochs.keys():
             raise KeyError('An epoch with this name already exists!')
         self.__epochs[name] = oe.OrcaEpoch(self.__block, name, start_time, end_time)
+        return self.__epochs[name]
+
+    def epochs(self):
+        return self.__epochs
 
 if __name__ == '__main__':
     of = OrcaFile()
@@ -85,4 +89,10 @@ if __name__ == '__main__':
     of.general_info.device.attributes = {'a' : 100, 'b' : 200}
     of.general_info.electrical = 'magic array'
     of.general_info.electrical.electrode_map = np.arange(10, 0.5)
+    epoch = of.add_epoch('test', 0.0, 10.2)
+    epoch.description = 'A test epoch'
+    epoch.ignore_intervals = [(0.0, 1.1), (1.5, 2.7), (7.5, 7.6)]
+    print(epoch.start_time)
+
+
     embed()
