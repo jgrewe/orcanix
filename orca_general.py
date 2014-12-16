@@ -268,3 +268,108 @@ class OrcaDevice(object):
     @attributes.deleter
     def attributes(self):
         del self.__section.sections['attributes']
+
+
+class OrcaElectrical(object):
+
+    def __init__(self, nix_file, session_id):
+        try:
+            s = nix_file.sections[session_id]
+        except:
+            raise Exception('Invalid session ID.')
+        self.__section = s.create_section('electrical', 'orca.electrical')
+        self.__block = nix_file.create_block('electrical', 'orca.electrical')
+
+    @property
+    def definition(self):
+        return get_property(self.__section, 'definition')
+
+    @definition.setter
+    def definition(self, definition):
+        set_property(self.__section, 'definition', definition)
+
+    @definition.deleter
+    def definition(self):
+        del self.__section['definition']
+
+    @property
+    def num_electrodes(self):
+        return get_property(self.__section, 'num_electrodes')
+
+    @num_electrodes.setter
+    def num_electrodes(self, num_electrodes):
+        set_property(self.__section, 'num_electrodes', num_electrodes)
+
+    @num_electrodes.deleter
+    def num_electrodes(self):
+        del self.__section['num_electrodes']
+
+    @property
+    def hardware(self):
+        return get_property(self.__section, 'hardware')
+
+    @hardware.setter
+    def hardware(self, hardware):
+        set_property(self.__section, 'hardware', hardware)
+
+    @hardware.deleter
+    def hardware(self):
+        del self.__section['hardware']
+
+    @property
+    def electrode_map(self):
+        da = [d for d in self.__block.data_arrays if d.name == 'electrode map']
+        if len(da) > 0:
+            return da[0][:]
+        else:
+            return None
+
+    @electrode_map.setter
+    def electrode_map(self, electrode_map):
+        if not isinstance(electrode_map, np.ndarray.__class__):
+            raise TypeError('Electrode map must be numpy ndarray.')
+        da = [d for d in self.__block.data_arrays if d.name == 'electrode map']
+        if len(da) > 0:
+            array = da[0]
+            array.extent = electrode_map.shape
+            array.data = electrode_map
+        else:
+            array = self.__block.create_data_array('electrode_map', 'orca.electrical.electrode_map', data=electrode_map)
+            for _ in electrode_map.shape:
+                array.append_set_dimension()
+            array.metadata = self.__section
+
+    @electrode_map.deleter
+    def electrode_map(self):
+        da = [d for d in self.__block.data_arrays if d.name == 'electrode map']
+        if len(da) > 0:
+            del self.__block.data_arrays[da[0]]
+
+    @property
+    def impedance(self):
+        da = [d for d in self.__block.data_arrays if d.name == 'impedance']
+        if len(da) > 0:
+            return da[0][:]
+        else:
+            return None
+
+    @impedance.setter
+    def impedance(self, impedance):
+        if not isinstance(impedance, np.ndarray.__class__):
+            raise TypeError('Impedance must be numpy ndarray.')
+        da = [d for d in self.__block.data_arrays if d.name == 'impedance']
+        if len(da) > 0:
+            array = da[0]
+            array.extent = impedance.shape
+            array.data = impedance
+        else:
+            array = self.__block.create_data_array('impdeance', 'orca.electrical.impedance', data=impedance)
+            for _ in impedance.shape:
+                array.append_set_dimension()
+            array.metadata = self.__section
+
+    @impedance.deleter
+    def impedance(self):
+        da = [d for d in self.__block.data_arrays if d.name == 'impedance']
+        if len(da) > 0:
+            del self.__block.data_arrays[da[0]]
