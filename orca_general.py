@@ -9,7 +9,7 @@ def set_property(section, prop, value):
     if section is not None:
         section[prop] = value
     else:
-        raise Exception('section not initialized!')
+        raise ValueError('Section not initialized!')
 
 
 def get_property(section, name):
@@ -103,7 +103,7 @@ class OrcaGeneral(object):
     @device.setter
     def device(self, model):
         self.__device = OrcaDevice(self.__nix_file, self.session_id)
-        self.__device.model= model
+        self.__device.model = model
 
 
 class OrcaAnimal(object):
@@ -249,7 +249,7 @@ class OrcaDevice(object):
     def attributes(self):
         try:
             attribs = self.__section.sections['attributes'].props
-        except:
+        except KeyError:
             attribs = None
         return attribs
 
@@ -258,13 +258,13 @@ class OrcaDevice(object):
         if isinstance(values, dict):
             try:
                 del self.__section.sections['attributes']
-            except:
+            except KeyError:
                 pass
             attr = self.__section.create_section('attributes', 'orca.device.attributes')
             for a in values.items():
                 attr[a[0]] = a[1]
         else:
-            raise Exception('Values of attributes must be a dictionary of name and value')
+            raise TypeError('Values of attributes must be a dictionary of name and value')
 
     @attributes.deleter
     def attributes(self):
