@@ -16,8 +16,11 @@ class OrcaFile(object):
     def __init__(self):
         self.nix_file = None
         self.__section = None
+        self.__block = None
         self.__general_info = None
 
+    """
+    TODO
     def open(self, filename, mode='read_only'):
         if "read_only" in mode:
             file_mode = nix.FileMode.ReadOnly
@@ -30,13 +33,18 @@ class OrcaFile(object):
             self.new(filename)
         else:
             self.nix_file = nix.File.open(filename, file_mode)
-        
+            self.__section = self.nix_file.sections['orca file']
+            self.__general_info =
+            self.__block =
+    """
     def new(self, filename, identifier=None, experiment_start_time=None):
         self.nix_file = nix.File.open(filename, nix.FileMode.Overwrite)
+        identifier = identifier if identifier else str(uuid.uuid4())
         self.__section = self.nix_file.create_section('orca file', 'orca.file')
         self.__section['orca_version'] = 0.2
-        self.__section['identifier'] = identifier if identifier else str(uuid.uuid4())
+        self.__section['identifier'] = identifier
         self.__section['experiment_start_time'] = experiment_start_time if experiment_start_time else time.ctime()
+        self.__block = self.__nix_file.create_block(identifier, 'orca.file')
 
     @property
     def general_info(self):
