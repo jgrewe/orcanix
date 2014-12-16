@@ -2,7 +2,8 @@
 #  -*- coding: utf-8 -*-
 from __future__ import print_function, division
 import uuid
-from IPython import embed
+import numpy as np
+
 
 def set_property(section, prop, value):
     if section is not None:
