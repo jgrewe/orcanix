@@ -6,7 +6,7 @@ import os
 import nix
 import time
 import uuid
-
+import numpy as np
 from IPython import embed
 import orca_general as og
 
@@ -59,6 +59,9 @@ if __name__ == '__main__':
     general = og.OrcaGeneral(of.nix_file, 'session_1')
     general.animal = 'animal_1'
     general.animal.species = 'C.  Elegans'
+    general.animal.birthdate = '2014-12-10'
     general.device = 'Amplifier_1'
     general.device.attributes = {'a' : 100, 'b' : 200}
+    general.electrical = 'magic array'
+    general.electrical.electrode_map = np.arange(10, 0.5)
     embed()
