@@ -21,15 +21,18 @@ def get_property(section, name):
 
 class OrcaGeneral(object):
     
-    def __init__(self, nix_file, session_id=None):
+    def __init__(self, nix_file, nix_block, session_id):
+        self.__block = nix_block
         self.__nix_file = nix_file
         self.__animal = None
         self.__device = None
         self.__electrical = None
-        if session_id is None:
-            session_id = str(uuid.uuid4())
-        self.__section = nix_file.create_section(session_id, 'orca.general')
-        set_property(self.__section, 'session_id', session_id)
+        secs = self.__nix_file.find_sections(filtr=lambda x: 'session_id' in x.name, limit=1)
+        if len(secs) > 0:
+            self.__section = secs[0]
+        else:
+            self.__section = nix_file.create_section(session_id, 'orca.general')
+            set_property(self.__section, 'session_id', session_id)
 
     @property
     def session_id(self):
@@ -111,7 +114,7 @@ class OrcaGeneral(object):
 
     @electrical.setter
     def electrical(self, hardware):
-        self.__electrical = OrcaElectrical(self.__nix_file, self.session_id)
+        self.__electrical = OrcaElectrical(self.__nix_file, self.session_id, self.__block)
         self.__electrical.hardware = hardware
 
 
@@ -282,13 +285,13 @@ class OrcaDevice(object):
 
 class OrcaElectrical(object):
 
-    def __init__(self, nix_file, session_id):
+    def __init__(self, nix_file, session_id, nix_block):
         try:
             s = nix_file.sections[session_id]
         except:
             raise Exception('Invalid session ID.')
         self.__section = s.create_section('electrical', 'orca.electrical')
-        self.__block = nix_file.create_block('electrical', 'orca.electrical')
+        self.__block = nix_block
 
     @property
     def definition(self):
