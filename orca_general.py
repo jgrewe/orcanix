@@ -25,7 +25,7 @@ class OrcaGeneral(object):
         self.__nix_file = nix_file
         self.__animal = None
         self.__device = None
-        self.__electric = None
+        self.__electrical = None
         if session_id is None:
             session_id = str(uuid.uuid4())
         self.__section = nix_file.create_section(session_id, 'orca.general')
@@ -104,6 +104,15 @@ class OrcaGeneral(object):
     def device(self, model):
         self.__device = OrcaDevice(self.__nix_file, self.session_id)
         self.__device.model = model
+
+    @property
+    def electrical(self):
+        return self.__electrical
+
+    @electrical.setter
+    def electrical(self, hardware):
+        self.__electrical = OrcaElectrical(self.__nix_file, self.session_id)
+        self.__electrical.hardware = hardware
 
 
 class OrcaAnimal(object):
@@ -327,7 +336,7 @@ class OrcaElectrical(object):
 
     @electrode_map.setter
     def electrode_map(self, electrode_map):
-        if not isinstance(electrode_map, np.ndarray.__class__):
+        if not isinstance(electrode_map, np.ndarray):
             raise TypeError('Electrode map must be numpy ndarray.')
         da = [d for d in self.__block.data_arrays if d.name == 'electrode map']
         if len(da) > 0:
@@ -356,7 +365,7 @@ class OrcaElectrical(object):
 
     @impedance.setter
     def impedance(self, impedance):
-        if not isinstance(impedance, np.ndarray.__class__):
+        if not isinstance(impedance, np.ndarray):
             raise TypeError('Impedance must be numpy ndarray.')
         da = [d for d in self.__block.data_arrays if d.name == 'impedance']
         if len(da) > 0:
