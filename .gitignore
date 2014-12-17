@@ -3,3 +3,4 @@
 *.orca
 *.pyc
 *~
+.idea*
