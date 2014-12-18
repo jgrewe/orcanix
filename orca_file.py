@@ -10,6 +10,7 @@ import numpy as np
 from IPython import embed
 import orca_general as og
 import orca_epochs as oe
+import orca_sequence as seq
 
 """
 FIXME:
@@ -18,6 +19,12 @@ FIXME:
  What is the difference between the file identifier and the session id?
 
  How are links between entities established?
+
+ Conversion and resolution in Sequence appear redundant!
+
+ Positions: Axis information is difficult. How should this be solved?
+            Unit of time axis always in seconds?
+            What about the other axes in the nD case?
 """
 
 
@@ -29,6 +36,7 @@ class OrcaFile(object):
         self.__block = None
         self.__general_info = None
         self.__epochs = {}
+        self.__data = {}
 
     """
     TODO
@@ -78,6 +86,15 @@ class OrcaFile(object):
     def epochs(self):
         return self.__epochs
 
+    def add_position_data(self, name, data, sampling_rate, lost_intervals=None):
+        if 'position_data' not in self.__data:
+            self.__data['position_data'] = []
+        self.__data['position_data'].append(seq.OrcaPosition(self.__nix_file, self.__block, name))
+        self.__data['position_data'][-1].data(data, 'mV', sampling_rate)
+        print(self.__data['position_data'][-1].conversion)
+        print(self.__data['position_data'][-1].sampling_rate)
+
+
 if __name__ == '__main__':
     of = OrcaFile()
     of.new('test.orca', 'test_session')
@@ -92,6 +109,8 @@ if __name__ == '__main__':
     epoch = of.add_epoch('test', 0.0, 10.2)
     epoch.description = 'A test epoch'
     epoch.ignore_intervals = [(0.0, 1.1), (1.5, 2.7), (7.5, 7.6)]
+    of.add_position_data('test data', np.zeros(100), 100)
+
     print(epoch.start_time)
 
 
