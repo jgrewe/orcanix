@@ -9,7 +9,7 @@ from IPython import embed
 
 import nix
 
-from orca import sequence as seq
+import sequence as seq
 import general as og
 import epochs as oe
 
@@ -22,7 +22,7 @@ FIXME:
 
  How are links between entities established?
 
- Conversion and resolution in Sequence appear redundant!
+ Naming of entities? So far only a few entities have names. If there are to be more than one, this is confusing.
 
  Positions:
             Axis information is difficult. How should this be solved?
@@ -30,8 +30,10 @@ FIXME:
             What about the other axes in the nD case?
   Sequences in general:
             Sample rate and t_intervals can be contradictory/in conflict!
-            Does t_interval assume that there is a constant stepsize in between steps? At the moment this is not
-            required. Imho this does not make sense. Either one has timestamps for each data point or a regular sampling.
+            Regarding the time information I would argue to define separate classes for the Neurolynx kind of data and
+            regular as well as irregularly sampled data. If handled in the wrong way using the combination of
+            timestamps, intervals and samplerate can easily lead to a terrible mess.
+            Conversion and resolution in Sequence appear redundant!
 
 """
 
