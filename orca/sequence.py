@@ -3,6 +3,7 @@
 from __future__ import print_function, division
 import nix
 
+
 def set_property(section, prop, value):
     if section is not None:
         section[prop] = value
@@ -17,7 +18,7 @@ def get_property(section, name):
         return None
 
 
-class OrcaSequence(object):
+class Sequence(object):
 
     def __init__(self, nix_file, nix_block, name, sequence_type):
         self.block = nix_block
@@ -65,9 +66,9 @@ class OrcaSequence(object):
         del self.__section['filter']
 
 
-class OrcaPosition(OrcaSequence):
+class Position(Sequence):
     def __init__(self, nix_file, nix_block, name):
-        super(OrcaPosition, self).__init__(nix_file, nix_block, name, 'position')
+        super(Position, self).__init__(nix_file, nix_block, name, 'position')
         self.__data_array = None
         self.__name = name
 
@@ -93,25 +94,26 @@ class OrcaPosition(OrcaSequence):
         dim = [d for d in self.__data_array.dimensions if d.dimension_type == nix.DimensionType.Sample][0]
         return 1./dim.sampling_interval
 
-class OrcaElectrical(OrcaSequence):
+
+class Electrical(Sequence):
     pass
 
 
-class OrcaPatchClamp(OrcaSequence):
+class PatchClamp(Sequence):
     pass
 
 
-class OrcaSpikeEvents(OrcaSequence):
+class SpikeEvents(Sequence):
     pass
 
 
-class OrcaImage(OrcaSequence):
+class Image(Sequence):
     pass
 
 
-class OrcaOptical(OrcaImage):
+class Optical(Image):
     pass
 
 
-class OrcaTwoPhoton(OrcaOptical):
+class TwoPhoton(Optical):
     pass

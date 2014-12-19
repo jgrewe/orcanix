@@ -99,7 +99,7 @@ class OrcaFile(object):
     def add_position_data(self, name, data, sampling_rate, lost_intervals=None):
         if 'position_data' not in self.__data:
             self.__data['position_data'] = []
-        self.__data['position_data'].append(seq.OrcaPosition(self.__nix_file, self.__block, name))
+        self.__data['position_data'].append(seq.Position(self.__nix_file, self.__block, name))
         self.__data['position_data'][-1].data(data, 'mV', sampling_rate)
         print(self.__data['position_data'][-1].conversion)
         print(self.__data['position_data'][-1].sampling_rate)
