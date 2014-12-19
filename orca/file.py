@@ -9,9 +9,9 @@ from IPython import embed
 
 import nix
 
-from orca import orca_sequence as seq
-import orca_general as og
-import orca_epochs as oe
+from orca import sequence as seq
+import general as og
+import epochs as oe
 
 
 """
