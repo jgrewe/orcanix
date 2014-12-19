@@ -2,15 +2,17 @@
 #  -*- coding: utf-8 -*-
 from __future__ import print_function, division
 
-import os
-import nix
 import time
 import uuid
 import numpy as np
 from IPython import embed
+
+import nix
+
+from orca import orca_sequence as seq
 import orca_general as og
 import orca_epochs as oe
-import orca_sequence as seq
+
 
 """
 FIXME:
