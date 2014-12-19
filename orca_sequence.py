@@ -52,6 +52,18 @@ class OrcaSequence(object):
     def ancestry(self):
         del self.__section['ancestry']
 
+    @property
+    def filter(self):
+        return get_property(self.__section, 'filter')
+
+    @filter.setter
+    def filter(self, value):
+        set_property(self.__section, 'filter', value)
+
+    @filter.deleter
+    def filter(self):
+        del self.__section['filter']
+
 
 class OrcaPosition(OrcaSequence):
     def __init__(self, nix_file, nix_block, name):
