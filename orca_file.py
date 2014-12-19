@@ -22,9 +22,15 @@ FIXME:
 
  Conversion and resolution in Sequence appear redundant!
 
- Positions: Axis information is difficult. How should this be solved?
+ Positions:
+            Axis information is difficult. How should this be solved?
             Unit of time axis always in seconds?
             What about the other axes in the nD case?
+  Sequences in general:
+            Sample rate and t_intervals can be contradictory/in conflict!
+            Does t_interval assume that there is a constant stepsize in between steps? At the moment this is not
+            required. Imho this does not make sense. Either one has timestamps for each data point or a regular sampling.
+
 """
 
 
