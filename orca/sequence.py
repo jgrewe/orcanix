@@ -120,6 +120,10 @@ class Position(Sequence):
         return 1./dim.sampling_interval
 
 
+class Neurolynx(Sequence):
+    pass
+
+
 class Electrical(Sequence):
     pass
 
