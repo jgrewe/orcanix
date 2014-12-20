@@ -70,6 +70,7 @@ class Position(Sequence):
     def __init__(self, nix_file, nix_block, name):
         super(Position, self).__init__(nix_file, nix_block, name, 'position')
         self.__data_array = None
+        self.__lost_intervals = None
         self.__name = name
 
     def data(self, data, unit, sampling_rate, time_axis=0):
@@ -80,6 +81,30 @@ class Position(Sequence):
         dim.label = 'time'
         dim.unit = 's'
         # FIXME working with 2D (nD?) data
+
+    @property
+    def lost_intervals(self):
+        if self.__lost_intervals is not None:
+            return self.__lostintervals[:]
+        else:
+            return None
+
+    @lost_intervals.setter
+    def lost_intervals(self, value):
+        if not isinstance(value, np.ndarray) or len(value.shape) is not 2:
+            raise ValueError('Lost_intervals must be 2D numpy nd-array')
+        if self.__lost_intervals is None:
+            self.__lost_intervals = self.block.create_data_array(self.__name + '_lost_intervals',
+                                                                 'orca.sequence.lost_intervals', data=value)
+        else:
+            self.__lost_intervals.extent = value.shape
+            self.__lost_intervals.data = value
+
+    @lost_intervals.deleter
+    def lost_intervals(self):
+        if self.__lost_intervals is not None:
+            del self.block.data_arrays[self.__lost_intervals.name]
+            self.__lost_intervals = None
 
     @property
     def conversion(self):
