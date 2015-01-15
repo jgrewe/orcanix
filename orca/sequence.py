@@ -74,14 +74,14 @@ class Position(Sequence):
         self.__name = name
 
     def data(self, data, labels, unit, sampling_rate, time_axis=None):
-    """
-      Set the data of the Position entity. 
-      @param data The data, numpy array
-      @param unit the unit of the sampled data
-      @param sampling_rate the rate with which the data was sampled.
-      @param time_axis and samplingrate are mutually exclusive. If time_axis given it has the higher
-             priority.
-    """
+        """
+        Set the data of the Position entity. 
+        @param data The data, numpy array
+        @param unit the unit of the sampled data
+        @param sampling_rate the rate with which the data was sampled.
+        @param time_axis and samplingrate are mutually exclusive. If time_axis given it has the higher
+        priority.
+        """
         self.__data_array = self.block.create_data_array(self.__name + '_positions', 'orca.sequence.position',
                                                          data=data)
         self.__data_array.unit = unit
@@ -95,7 +95,8 @@ class Position(Sequence):
             dim = self.__data_array.append_range_dimension(time_axis)
         dim.label = 'time'
         dim.unit = 's'
-        self.__data_array.append_set_dimension(labels)
+        set_dim = self.__data_array.append_set_dimension()
+        set_dim.labels = labels
         # FIXME working with 2D (nD?) data
 
     @property

@@ -88,8 +88,8 @@ class OrcaFile(object):
         if 'position_data' not in self.__data:
             self.__data['position_data'] = []
         self.__data['position_data'].append(seq.Position(self.__nix_file, self.__block, name))
-        self.__data['position_data'][-1].data(data, 'mV', labels, sampling_rate)
-        self.__data['psotion_data'][-1].lost_intervals(lost_intervals)
+        self.__data['position_data'][-1].data(data, labels, 'mV', sampling_rate)
+        #        self.__data['position_data'][-1].lost_intervals(lost_intervals)
 
 
 if __name__ == '__main__':
