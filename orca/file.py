@@ -16,7 +16,7 @@ import epochs as oe
 
 """
 FIXME:
- Unclear whether there are more than one sessions in a single file?
+ Unclear whether it is intended to have  more than one sessions in a single file?
 
  What is the difference between the file identifier and the session id?
 
@@ -34,7 +34,7 @@ FIXME:
             regular as well as irregularly sampled data. If handled in the wrong way using the combination of
             timestamps, intervals and samplerate can easily lead to a terrible mess.
             Conversion and resolution in Sequence appear redundant!
-
+            Not sure if I understand ancestry correctly. Handled this as the type of the sequence
 """
 
 
@@ -48,24 +48,12 @@ class OrcaFile(object):
         self.__epochs = {}
         self.__data = {}
 
-    """
-    TODO
-    def open(self, filename, mode='read_only'):
-        if "read_only" in mode:
-            file_mode = nix.FileMode.ReadOnly
-        elif "read_write" in mode:
-            file_mode = nix.FileMode.ReadWrite
-        elif "overwrite" in mode:
-            file_mode = nix.FileMode.Overwrite
-        
-        if not os.path.exists(filename) or file_mode == nix.FileMode.Overwrite:
-            self.new(filename)
-        else:
-            self.nix_file = nix.File.open(filename, file_mode)
-            self.__section = self.nix_file.sections['orca file']
-            self.__general_info =
-            self.__block =
-    """
+    def open(self, filename, file_mode=nix.FileMode.Overwrite):        
+        self.nix_file = nix.File.open(filename, file_mode)
+        self.__section = self.nix_file.sections['orca file']
+        # self.__general_info =
+        # self.__block =
+
     def new(self, filename, identifier=None, experiment_start_time=None):
         self.__nix_file = nix.File.open(filename, nix.FileMode.Overwrite)
         identifier = identifier if identifier else str(uuid.uuid4())
