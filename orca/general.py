@@ -123,20 +123,24 @@ class OrcaGeneral(object):
 
 class OrcaAnimal(object):
 
-    def __init__(self, nix_file, session_id):
-        try:
-            s = nix_file.sections[session_id]
-        except:
-            raise Exception('Invalid session ID.')
-        self.__section = s.create_section('Animal', 'orca.animal')
+    def __init__(self, animal_section):
+        self.__section = animal_section
 
+    @classmethod
+    def from_section(cls, animal_section):
+        return cls(animal_section)
+
+    @classmethod
+    def create_new(cls, general_section, animal_id):
+        return cls(general_section.create_section(animal_id, 'orca.animal'))
+        
     @property
     def animal_id(self):
-        return get_property(self.__section, 'animal_id')
+        return self.__section.name
 
     @animal_id.setter
     def animal_id(self, value):
-        set_property(self.__section, 'animal_id', value)
+        self.__section.name = value
 
     @animal_id.deleter
     def animal_id(self):
