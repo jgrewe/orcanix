@@ -24,7 +24,7 @@ class OrcaGeneral(object):
     def __init__(self, nix_file, nix_block, general_section):
         self.__block = nix_block
         self.__nix_file = nix_file
-        self.__animal = None
+        self.__animals = {}
         self.__device = None
         self.__electrical = None
         self.__section = general_section
@@ -95,13 +95,12 @@ class OrcaGeneral(object):
         del self.__section['notes']
 
     @property
-    def animal(self):
-        return self.__animal
+    def animals(self):
+        return self.__animals
 
-    @animal.setter
-    def animal(self, animal_id):
-        self.__animal = OrcaAnimal(self.__nix_file, self.session_id)
-        self.__animal.animal_id = animal_id
+    def add_animal(self, animal_id):
+        if animal_id not in self.__animals.keys():
+            self.__animals[animal_id] = OrcaAnimal.create_new(self.__section, animal_id)
 
     @property
     def device(self):
