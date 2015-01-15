@@ -21,27 +21,31 @@ def get_property(section, name):
 
 class OrcaGeneral(object):
     
-    def __init__(self, nix_file, nix_block, session_id):
+    def __init__(self, nix_file, nix_block, general_section):
         self.__block = nix_block
         self.__nix_file = nix_file
         self.__animal = None
         self.__device = None
         self.__electrical = None
-        secs = self.__nix_file.find_sections(filtr=lambda x: 'session_id' in x.name, limit=1)
+        self.__section = general_section
+
+    @classmethod
+    def from_section(cls, nix_file, nix_block, general_section):
+        return cls(nix_file, nix_block, general_section)
+
+    @classmethod
+    def create_new(cls, nix_file, nix_block, session_id):
+        secs = nix_file.find_sections(filtr=lambda x: 'session_id' in x.name, limit=1)
         if len(secs) > 0:
-            self.__section = secs[0]
+            section = secs[0]
         else:
-            self.__section = nix_file.create_section(session_id, 'orca.general')
-            set_property(self.__section, 'session_id', session_id)
+            section = nix_file.create_section(session_id, 'orca.general')
+        return cls(nix_file, nix_block, section)
 
     @property
     def session_id(self):
-        return get_property(self.__section, 'session_id')
-
-    @session_id.deleter
-    def session_id(self):
-        del self.__section['session_id']
-
+        return self.__section.name
+        
     @property
     def experiment(self):
         return get_property(self.__section, 'experiment')

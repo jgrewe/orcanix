@@ -53,7 +53,7 @@ class OrcaFile(object):
         self.__section = self.nix_file.sections['orca file']
         # self.__general_info =
         # self.__block =
-
+    
     def new(self, filename, identifier=None, experiment_start_time=None):
         self.__nix_file = nix.File.open(filename, nix.FileMode.Overwrite)
         identifier = identifier if identifier else str(uuid.uuid4())
@@ -69,7 +69,7 @@ class OrcaFile(object):
 
     @general_info.setter
     def general_info(self, session_id):
-        self.__general_info = og.OrcaGeneral(self.__nix_file, self.__block, session_id)
+        self.__general_info = og.OrcaGeneral.create_new(self.__nix_file, self.__block, session_id)
 
     @property
     def file_info(self):
