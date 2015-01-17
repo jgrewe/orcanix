@@ -30,11 +30,11 @@ class OrcaGeneral(object):
         self.__section = general_section
 
     @classmethod
-    def from_section(cls, nix_file, nix_block, general_section):
+    def open(cls, nix_file, nix_block, general_section):
         return cls(nix_file, nix_block, general_section)
 
     @classmethod
-    def create_new(cls, nix_file, nix_block, session_id):
+    def new(cls, nix_file, nix_block, session_id):
         secs = nix_file.find_sections(filtr=lambda x: 'session_id' in x.name, limit=1)
         if len(secs) > 0:
             section = secs[0]

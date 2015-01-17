@@ -53,7 +53,6 @@ class OrcaFile(object):
         nix_file = nix.File.open(filename, file_mode)
         section = self.nix_file.sections['orca file']
         return cls(nix_file, nix_file.block[0], section)
-        # self.__general_info =
     
     @classmethod
     def new(cls, filename, identifier=None, experiment_start_time=None):
@@ -72,7 +71,7 @@ class OrcaFile(object):
 
     @general_info.setter
     def general_info(self, session_id):
-        self.__general_info = og.OrcaGeneral.create_new(self.__nix_file, self.__block, session_id)
+        self.__general_info = og.OrcaGeneral.new(self.__nix_file, self.__block, session_id)
 
     @property
     def file_info(self):
