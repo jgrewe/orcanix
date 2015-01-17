@@ -101,13 +101,18 @@ class OrcaGeneral(object):
     def add_animal(self, animal_id):
         if animal_id not in self.__animals.keys():
             self.__animals[animal_id] = OrcaAnimal.create_new(self.__section, animal_id)
+        else:
+            print("Animal with that id already exists in the file.")
 
     @property
     def devices(self):
         return self.__devices
 
-    def add_device(self, name):
-        self.__devices[name] = OrcaDevice.new(self.__section, name)
+    def add_device(self, device_name):
+        if device_name not in self.__devices.keys():
+            self.__devices[device_name] = OrcaDevice.new(self.__section, device_name)
+        else:
+            print("Device with that name already exists in the file.")
 
     @property
     def electricals(self):
@@ -304,7 +309,7 @@ class OrcaElectrical(object):
         return cls(nix_block, general_section.create_section(name, 'orca.electrical'))
 
     @classmethod
-    def open(cls, nix_bloc, electrical_section):
+    def open(cls, nix_block, electrical_section):
         return cls(nix_block, electrical_section)
 
     @property
