@@ -40,28 +40,31 @@ FIXME:
 
 class OrcaFile(object):
     
-    def __init__(self):
-        self.__nix_file = None
-        self.__section = None
-        self.__block = None
+    def __init__(self,  nix_file, nix_block, section):
+        self.__nix_file = nix_file
+        self.__section = section
+        self.__block = nix_block
         self.__general_info = None
         self.__epochs = {}
         self.__data = {}
-
-    def open(self, filename, file_mode=nix.FileMode.Overwrite):        
-        self.nix_file = nix.File.open(filename, file_mode)
-        self.__section = self.nix_file.sections['orca file']
-        # self.__general_info =
-        # self.__block =
     
-    def new(self, filename, identifier=None, experiment_start_time=None):
-        self.__nix_file = nix.File.open(filename, nix.FileMode.Overwrite)
+    @classmethod
+    def open(cls, filename, file_mode=nix.FileMode.Overwrite):
+        nix_file = nix.File.open(filename, file_mode)
+        section = self.nix_file.sections['orca file']
+        return cls(nix_file, nix_file.block[0], section)
+        # self.__general_info =
+    
+    @classmethod
+    def new(cls, filename, identifier=None, experiment_start_time=None):
+        nix_file = nix.File.open(filename, nix.FileMode.Overwrite)
         identifier = identifier if identifier else str(uuid.uuid4())
-        self.__section = self.__nix_file.create_section('orca file', 'orca.file')
-        self.__section['orca_version'] = 0.2
-        self.__section['identifier'] = identifier
-        self.__section['experiment_start_time'] = experiment_start_time if experiment_start_time else time.ctime()
-        self.__block = self.__nix_file.create_block(identifier, 'orca.file')
+        section = nix_file.create_section('orca file', 'orca.file')
+        section['orca_version'] = 0.2
+        section['identifier'] = identifier
+        section['experiment_start_time'] = experiment_start_time if experiment_start_time else time.ctime()
+        block = nix_file.create_block(identifier, 'orca.file')
+        return cls(nix_file, block, section)
 
     @property
     def general_info(self):
@@ -93,8 +96,7 @@ class OrcaFile(object):
 
 
 if __name__ == '__main__':
-    of = OrcaFile()
-    of.new('test.orca', 'test_session')
+    of = OrcaFile.new('test.orca', 'test_session')
     of.general_info = 'session_1'
     of.general_info.add_animal('animal_1')
     of.general_info.animals['animal_1'].species = 'C.  Elegans'
