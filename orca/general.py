@@ -25,7 +25,7 @@ class OrcaGeneral(object):
         self.__block = nix_block
         self.__nix_file = nix_file
         self.__animals = {}
-        self.__device = None
+        self.__devices = {}
         self.__electrical = None
         self.__section = general_section
 
@@ -103,13 +103,11 @@ class OrcaGeneral(object):
             self.__animals[animal_id] = OrcaAnimal.create_new(self.__section, animal_id)
 
     @property
-    def device(self):
-        return self.__device
+    def devices(self):
+        return self.__devices
 
-    @device.setter
-    def device(self, model):
-        self.__device = OrcaDevice(self.__nix_file, self.session_id)
-        self.__device.model = model
+    def add_device(self, name):
+        self.__devices[name] = OrcaDevice.new(self.__section, name)
 
     @property
     def electrical(self):
@@ -209,12 +207,16 @@ class OrcaAnimal(object):
 
 class OrcaDevice(object):
 
-    def __init__(self, nix_file, session_id):
-        try:
-            s = nix_file.sections[session_id]
-        except:
-            raise Exception('Invalid session ID.')
-        self.__section = s.create_section('Device', 'orca.device')
+    def __init__(self, section):
+        self.__section = section
+    
+    @classmethod
+    def new(cls, general_section, device_name):
+        return cls(general_section.create_section(device_name, 'orca.device'))
+
+    @classmethod
+    def open(cls, device_section):
+        return cls(device_section)
 
     @property
     def make(self):
