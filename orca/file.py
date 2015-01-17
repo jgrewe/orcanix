@@ -44,15 +44,20 @@ class OrcaFile(object):
         self.__nix_file = nix_file
         self.__section = section
         self.__block = nix_block
-        self.__general_info = None
+        self.__nix_file.sections 
+        secs = self.__nix_file.find_sections(filtr=lambda x: 'orca.general' in x.type, limit=1)
+        if len(secs) > 0:
+            self.__general_info = og.OrcaGeneral.open(self.__nix_file, self.__block, secs[0])
+        else:
+            self.__general_info = None
         self.__epochs = {}
         self.__data = {}
     
     @classmethod
-    def open(cls, filename, file_mode=nix.FileMode.Overwrite):
+    def open(cls, filename, file_mode=nix.FileMode.ReadWrite):
         nix_file = nix.File.open(filename, file_mode)
-        section = self.nix_file.sections['orca file']
-        return cls(nix_file, nix_file.block[0], section)
+        section = nix_file.sections['orca file']
+        return cls(nix_file, nix_file.blocks[0], section)
     
     @classmethod
     def new(cls, filename, identifier=None, experiment_start_time=None):
@@ -112,5 +117,9 @@ if __name__ == '__main__':
     epoch.description = 'A test epoch'
     epoch.ignore_intervals = [(0.0, 1.1), (1.5, 2.7), (7.5, 7.6)]
     of.add_position_data('test data', np.random.randn(100, 2), ['x', 'y'], 100)
+    of.close()
 
     embed()
+    of = OrcaFile.open('test.orca')
+    print(of.general_info)
+    of.close()
