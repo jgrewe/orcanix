@@ -93,6 +93,9 @@ class OrcaFile(object):
         self.__data['position_data'][-1].data(data, labels, 'mV', sampling_rate)
         #        self.__data['position_data'][-1].lost_intervals(lost_intervals)
 
+    def close(self):
+        self.__nix_file.close()
+
 
 if __name__ == '__main__':
     of = OrcaFile.new('test.orca', 'test_session')
