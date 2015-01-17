@@ -96,9 +96,9 @@ if __name__ == '__main__':
     of = OrcaFile()
     of.new('test.orca', 'test_session')
     of.general_info = 'session_1'
-    of.general_info.animal = 'animal_1'
-    of.general_info.animal.species = 'C.  Elegans'
-    of.general_info.animal.birthdate = '2014-12-10'
+    of.general_info.add_animal('animal_1')
+    of.general_info.animals['animal_1'].species = 'C.  Elegans'
+    of.general_info.animals['animal_1'].birthdate = '2014-12-10'
     of.general_info.device = 'Amplifier_1'
     of.general_info.device.attributes = {'a' : 100, 'b' : 200}
     of.general_info.electrical = 'magic array'
@@ -106,6 +106,6 @@ if __name__ == '__main__':
     epoch = of.add_epoch('test', 0.0, 10.2)
     epoch.description = 'A test epoch'
     epoch.ignore_intervals = [(0.0, 1.1), (1.5, 2.7), (7.5, 7.6)]
-    of.add_position_data('test data', ['x', 'y'], np.random.randn((100,2)), 100)
+    of.add_position_data('test data', np.random.randn(100, 2), ['x', 'y'], 100)
 
     embed()
