@@ -73,13 +73,29 @@ class Position(Sequence):
         self.__lost_intervals = None
         self.__name = name
 
-    def data(self, data, unit, sampling_rate, time_axis=0):
+    def data(self, data, labels, unit, sampling_rate, time_axis=None):
+    """
+      Set the data of the Position entity. 
+      @param data The data, numpy array
+      @param unit the unit of the sampled data
+      @param sampling_rate the rate with which the data was sampled.
+      @param time_axis and samplingrate are mutually exclusive. If time_axis given it has the higher
+             priority.
+    """
         self.__data_array = self.block.create_data_array(self.__name + '_positions', 'orca.sequence.position',
                                                          data=data)
         self.__data_array.unit = unit
-        dim = self.__data_array.append_sampled_dimension(1./sampling_rate)
+        if sampling_rate is None and time_axis is None:
+            raise ValueError("Sequence.Position: require either sampling_rate or time_interval.")
+        if time_axis is None and sampling_rate is not None:
+            dim = self.__data_array.append_sampled_dimension(1./sampling_rate)
+        if time_axis is not None:
+            if len(time_axis) != data.shape[0]:
+                raise ValueError("Length of time axis must match first number of elements in the first dimension of the data.")
+            dim = self.__data_array.append_range_dimension(time_axis)
         dim.label = 'time'
         dim.unit = 's'
+        self.__data_array.append_set_dimension(labels)
         # FIXME working with 2D (nD?) data
 
     @property

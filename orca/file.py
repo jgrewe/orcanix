@@ -96,13 +96,12 @@ class OrcaFile(object):
     def epochs(self):
         return self.__epochs
 
-    def add_position_data(self, name, data, sampling_rate, lost_intervals=None):
+    def add_position_data(self, name, data, labels, sampling_rate, lost_intervals=None):
         if 'position_data' not in self.__data:
             self.__data['position_data'] = []
         self.__data['position_data'].append(seq.Position(self.__nix_file, self.__block, name))
-        self.__data['position_data'][-1].data(data, 'mV', sampling_rate)
-        print(self.__data['position_data'][-1].conversion)
-        print(self.__data['position_data'][-1].sampling_rate)
+        self.__data['position_data'][-1].data(data, 'mV', labels, sampling_rate)
+        self.__data['psotion_data'][-1].lost_intervals(lost_intervals)
 
 
 if __name__ == '__main__':
@@ -119,9 +118,6 @@ if __name__ == '__main__':
     epoch = of.add_epoch('test', 0.0, 10.2)
     epoch.description = 'A test epoch'
     epoch.ignore_intervals = [(0.0, 1.1), (1.5, 2.7), (7.5, 7.6)]
-    of.add_position_data('test data', np.zeros(100), 100)
-
-    print(epoch.start_time)
-
+    of.add_position_data('test data', ['x', 'y'], np.random.randn((100,2)), 100)
 
     embed()
