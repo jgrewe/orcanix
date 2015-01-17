@@ -18,6 +18,9 @@ def get_property(section, name):
     else:
         return None
 
+def find_sections(parent_section, section_type):
+    secs = parent_section.find_sections(filtr=lambda x: section_type in x.type, limit=1)
+    return secs   
 
 class OrcaGeneral(object):
     
@@ -28,6 +31,12 @@ class OrcaGeneral(object):
         self.__devices = {}
         self.__electricals = {}
         self.__section = general_section
+        for s in find_sections(self.__section, 'orca.animal'):
+            self.__animals[s.name] = OrcaAnimal.from_section(s)
+        for s in find_sections(self.__section, 'orca.devices'):
+            self.__devices[s.name] = OrcaDevice.open(s)
+        for s in find_sections(self.__section, 'orca.electrical'):
+            self.__electricals[s.name] = OrcaElectrical.open(self.__block, s)
 
     @classmethod
     def open(cls, nix_file, nix_block, general_section):
