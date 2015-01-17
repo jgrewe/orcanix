@@ -104,8 +104,8 @@ if __name__ == '__main__':
     of.general_info.add_device('Amplifier_1')
     of.general_info.devices['Amplifier_1'].model = 'Amplifier'
     of.general_info.devices['Amplifier_1'].attributes = {'a' : 100, 'b' : 200}
-    of.general_info.electrical = 'magic array'
-    of.general_info.electrical.electrode_map = np.arange(10, 0.5)
+    of.general_info.add_electrical('magic array')
+    of.general_info.electricals['magic array'].electrode_map = np.arange(10, 0.5)
     epoch = of.add_epoch('test', 0.0, 10.2)
     epoch.description = 'A test epoch'
     epoch.ignore_intervals = [(0.0, 1.1), (1.5, 2.7), (7.5, 7.6)]

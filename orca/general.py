@@ -26,7 +26,7 @@ class OrcaGeneral(object):
         self.__nix_file = nix_file
         self.__animals = {}
         self.__devices = {}
-        self.__electrical = None
+        self.__electricals = {}
         self.__section = general_section
 
     @classmethod
@@ -110,14 +110,15 @@ class OrcaGeneral(object):
         self.__devices[name] = OrcaDevice.new(self.__section, name)
 
     @property
-    def electrical(self):
-        return self.__electrical
+    def electricals(self):
+        return self.__electricals
 
-    @electrical.setter
-    def electrical(self, hardware):
-        self.__electrical = OrcaElectrical(self.__nix_file, self.session_id, self.__block)
-        self.__electrical.hardware = hardware
-
+    def add_electrical(self, hardware):
+        if hardware not in self.__electricals.keys():
+            self.__electricals[hardware] = OrcaElectrical.new(self.__block, self.__section, hardware)
+        else:
+            print("Electrical with that name already exists in the file.")
+            
 
 class OrcaAnimal(object):
 
@@ -294,13 +295,17 @@ class OrcaDevice(object):
 
 class OrcaElectrical(object):
 
-    def __init__(self, nix_file, session_id, nix_block):
-        try:
-            s = nix_file.sections[session_id]
-        except:
-            raise Exception('Invalid session ID.')
-        self.__section = s.create_section('electrical', 'orca.electrical')
+    def __init__(self, nix_block, section):
+        self.__section = section
         self.__block = nix_block
+
+    @classmethod
+    def new(cls, nix_block, general_section, name):
+        return cls(nix_block, general_section.create_section(name, 'orca.electrical'))
+
+    @classmethod
+    def open(cls, nix_bloc, electrical_section):
+        return cls(nix_block, electrical_section)
 
     @property
     def definition(self):
