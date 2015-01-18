@@ -47,7 +47,7 @@ class OrcaFile(object):
         self.__nix_file.sections 
         secs = self.__nix_file.find_sections(filtr=lambda x: 'orca.general' in x.type, limit=1)
         self.__epochs = {}
-        self.__data = {}
+        self.__sequences = {}
 
         if len(secs) > 0:
             self.__general_info = og.OrcaGeneral.open(self.__nix_file, self.__block, secs[0])
@@ -56,6 +56,8 @@ class OrcaFile(object):
         epochs = [t for t in self.__block.tags if 'orca.epoch' in t.type]
         for e in epochs:
             self.__epochs[e.name] = oe.OrcaEpoch.open(self.__block, e)
+        seqs = self.__nix_file.find_sections(filtr=lambda x: 'orca.sequence' in x.type, limit=1)
+        self.__open_sequences(seqs)
     
     @classmethod
     def open(cls, filename, file_mode=nix.FileMode.ReadWrite):
@@ -74,6 +76,20 @@ class OrcaFile(object):
         block = nix_file.create_block(identifier, 'orca.file')
         return cls(nix_file, block, section)
 
+    def __open_sequences(self, sequence_sections):
+        for s in sequence_sections:
+            sequence_type = s.type.split('.')[-1]
+            if sequence_type not in self.__sequences.keys():
+                self.__sequences[sequence_type] = []
+            sequence = None
+            if sequence_type == 'position':
+                sequence = seq.Position.open(self.__block, s)
+            # elif sequence_type == 'electrical':
+            #    seq = seq.Electrical.open(self.__block, s)
+            # TODO other types
+            if sequence is not None:
+                self.__sequences[sequence_type].append(sequence)
+            
     @property
     def general_info(self):
         return self.__general_info
@@ -97,18 +113,24 @@ class OrcaFile(object):
         return self.__epochs
 
     def add_position_data(self, name, data, labels, sampling_rate, lost_intervals=None):
-        if 'position_data' not in self.__data:
-            self.__data['position_data'] = []
-        self.__data['position_data'].append(seq.Position(self.__nix_file, self.__block, name))
-        self.__data['position_data'][-1].data(data, labels, 'mV', sampling_rate)
+        if 'position_data' not in self.__sequences:
+            self.__sequences['position_data'] = []
+        self.__sequences['position_data'].append(seq.Position.new(self.__nix_file, self.__block, name))
+        self.__sequences['position_data'][-1].data(data, labels, 'mV', sampling_rate)
         if lost_intervals is not None:
-            self.__data['position_data'][-1].lost_intervals(lost_intervals)
+            self.__sequences['position_data'][-1].lost_intervals(lost_intervals)
+        return self.__sequences['position_data'][-1]
+
+    @property
+    def sequences(self):
+        return self.__sequences
 
     def close(self):
         self.__nix_file.close()
 
 
 if __name__ == '__main__':
+    print('... create new file...')
     of = OrcaFile.new('test.orca', 'test_session')
     of.general_info = 'session_1'
     of.general_info.add_animal('animal_1')
@@ -122,11 +144,18 @@ if __name__ == '__main__':
     epoch = of.add_epoch('test', 0.0, 10.2)
     epoch.description = 'A test epoch'
     epoch.ignore_intervals = [(0.0, 1.1), (1.5, 2.7), (7.5, 7.6)]
-    of.add_position_data('test data', np.random.randn(100, 2), ['x', 'y'], 100)
+    p = of.add_position_data('test data', np.random.randn(100, 2), ['x', 'y'], 100)
+    embed()
     of.close()
+    print('... close file!')
 
-    embed()
+    print('... Reopen file and read some stuff...')
+    of = None # set to none when reusing variable
     of = OrcaFile.open('test.orca', nix.FileMode.ReadWrite)
-    print(of.general_info)
-    embed()
+    pos = of.sequences['position'][0]
+    print(pos.name)
+    print(pos.ancestry)
+    print(pos.positions)
+    
     of.close()
+    print('...done!')
