@@ -41,12 +41,33 @@ class Sequence(object):
 
 
 class Position(Sequence):
-    def __init__(self, nix_file, nix_block, name):
-        super(Position, self).__init__(nix_file, nix_block, name, 'position')
+    def __init__(self, nix_block, section):
+        super(Position, self).__init__(nix_block, section)
+        self.__name = section.name
         self.__data_array = None
+        if section.name + '_positions' in nix_block.data_arrays:
+            self.__data_array = nix_block.data_arrays[section.name + '_positions']
         self.__lost_intervals = None
-        self.__name = name
+        if section.name + '_lost_intervals' in nix_block.data_arrays:
+            self.__lost_intervals = nix_block.data_arrays[section.name + '_lost_intervals']
+        
+    @classmethod
+    def new(cls, nix_file, nix_block, name):
+        s = nix_file.create_section(name, 'orca.sequence.position')
+        return cls(nix_block, s)
 
+    @classmethod
+    def open(cls, nix_block, section):
+        return cls(nix_block, section)
+        
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def positions(self):
+        return self.__data_array[:]
+        
     def data(self, data, labels, unit, sampling_rate, time_axis=None):
         """
         Set the data of the Position entity. 
@@ -56,7 +77,7 @@ class Position(Sequence):
         @param time_axis and samplingrate are mutually exclusive. If time_axis given it has the higher
         priority.
         """
-        self.__data_array = self.block.create_data_array(self.__name + '_positions', 'orca.sequence.position',
+        self.__data_array = self.block.create_data_array(self.name + '_positions', 'orca.sequence.position',
                                                          data=data)
         self.__data_array.unit = unit
         if sampling_rate is None and time_axis is None:
@@ -85,7 +106,7 @@ class Position(Sequence):
         if not isinstance(value, np.ndarray) or len(value.shape) is not 2:
             raise ValueError('Lost_intervals must be 2D numpy nd-array')
         if self.__lost_intervals is None:
-            self.__lost_intervals = self.block.create_data_array(self.__name + '_lost_intervals',
+            self.__lost_intervals = self.block.create_data_array(self.name + '_lost_intervals',
                                                                  'orca.sequence.lost_intervals', data=value)
         else:
             self.__lost_intervals.extent = value.shape
