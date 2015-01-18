@@ -1,22 +1,8 @@
 # !/usr/bin/env python
 #  -*- coding: utf-8 -*-
 from __future__ import print_function, division
+from util import *
 import nix
-
-
-def set_property(section, prop, value):
-    if section is not None:
-        section[prop] = value
-    else:
-        raise ValueError('Section not initialized!')
-
-
-def get_property(section, name):
-    if section.has_property_by_name(name):
-        return section[name]
-    else:
-        return None
-
 
 class Sequence(object):
 
