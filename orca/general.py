@@ -15,7 +15,7 @@ class OrcaGeneral(object):
         self.__electricals = {}
         self.__section = general_section
         for s in find_sections(self.__section, 'orca.animal'):
-            self.__animals[s.name] = OrcaAnimal.from_section(s)
+            self.__animals[s.name] = OrcaAnimal.open(s)
         for s in find_sections(self.__section, 'orca.devices'):
             self.__devices[s.name] = OrcaDevice.open(s)
         for s in find_sections(self.__section, 'orca.electrical'):
@@ -92,7 +92,7 @@ class OrcaGeneral(object):
 
     def add_animal(self, animal_id):
         if animal_id not in self.__animals.keys():
-            self.__animals[animal_id] = OrcaAnimal.create_new(self.__section, animal_id)
+            self.__animals[animal_id] = OrcaAnimal.new(self.__section, animal_id)
         else:
             print("Animal with that id already exists in the file.")
 
@@ -123,11 +123,11 @@ class OrcaAnimal(object):
         self.__section = animal_section
 
     @classmethod
-    def from_section(cls, animal_section):
+    def open(cls, animal_section):
         return cls(animal_section)
 
     @classmethod
-    def create_new(cls, general_section, animal_id):
+    def new(cls, general_section, animal_id):
         return cls(general_section.create_section(animal_id, 'orca.animal'))
         
     @property
