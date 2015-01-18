@@ -69,3 +69,6 @@ class OrcaEpoch(object):
         extents_da = self.__block.create_data_array(self.name + '_ignore_ends', 'orca.epoch.ignore_interval.extents', data=extents)
         self.__ignore_intervals = self.__block.create_multi_tag(self.name + '_ignore_intervals', 'orca.epoch.ignore_interval', positions_da)
         self.__ignore_intervals.extents = extents_da
+
+# TODO adding stimulus stream once sequences work
+# TODO adding data stream once sequences work
