@@ -46,12 +46,16 @@ class OrcaFile(object):
         self.__block = nix_block
         self.__nix_file.sections 
         secs = self.__nix_file.find_sections(filtr=lambda x: 'orca.general' in x.type, limit=1)
+        self.__epochs = {}
+        self.__data = {}
+
         if len(secs) > 0:
             self.__general_info = og.OrcaGeneral.open(self.__nix_file, self.__block, secs[0])
         else:
             self.__general_info = None
-        self.__epochs = {}
-        self.__data = {}
+        epochs = [t for t in self.__block.tags if 'orca.epoch' in t.type]
+        for e in epochs:
+            self.__epochs[e.name] = oe.OrcaEpoch.open(self.__block, e)
     
     @classmethod
     def open(cls, filename, file_mode=nix.FileMode.ReadWrite):
@@ -85,9 +89,10 @@ class OrcaFile(object):
     def add_epoch(self, name, start_time, end_time=None):
         if name in self.__epochs.keys():
             raise KeyError('An epoch with this name already exists!')
-        self.__epochs[name] = oe.OrcaEpoch(self.__block, name, start_time, end_time)
+        self.__epochs[name] = oe.OrcaEpoch.new(self.__block, name, start_time, end_time)
         return self.__epochs[name]
-
+    
+    @property
     def epochs(self):
         return self.__epochs
 
@@ -96,7 +101,8 @@ class OrcaFile(object):
             self.__data['position_data'] = []
         self.__data['position_data'].append(seq.Position(self.__nix_file, self.__block, name))
         self.__data['position_data'][-1].data(data, labels, 'mV', sampling_rate)
-        #        self.__data['position_data'][-1].lost_intervals(lost_intervals)
+        if lost_intervals is not None:
+            self.__data['position_data'][-1].lost_intervals(lost_intervals)
 
     def close(self):
         self.__nix_file.close()
@@ -120,6 +126,7 @@ if __name__ == '__main__':
     of.close()
 
     embed()
-    of = OrcaFile.open('test.orca')
+    of = OrcaFile.open('test.orca', nix.FileMode.ReadWrite)
     print(of.general_info)
+    embed()
     of.close()
