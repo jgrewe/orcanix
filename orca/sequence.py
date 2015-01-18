@@ -3,53 +3,41 @@
 from __future__ import print_function, division
 from util import *
 import nix
+from IPython import embed
 
 class Sequence(object):
 
-    def __init__(self, nix_file, nix_block, name, sequence_type):
+    def __init__(self, nix_block, sequence_section):
         self.block = nix_block
-        self.__nix_file = nix_file
-        secs = self.__nix_file.find_sections(filtr=lambda x: name in x.name, limit=1)
-        if len(secs) > 0:
-            self.__section = secs[0]
-        else:
-            self.__section = nix_file.create_section(name, 'orca.sequence' + '.' + sequence_type)
+        self.section = sequence_section
 
     @property
     def description(self):
-        return get_property(self.__section, 'description')
+        return get_property(self.section, 'description')
 
     @description.setter
     def description(self, value):
-        set_property(self.__section, 'description', value)
+        set_property(self.section, 'description', value)
 
     @description.deleter
     def description(self):
-        del self.__section['description']
+        del self.section['description']
 
     @property
     def ancestry(self):
-        return get_property(self.__section, 'ancestry')
-
-    @ancestry.setter
-    def ancestry(self, value):
-        set_property(self.__section, 'ancestry', value)
-
-    @ancestry.deleter
-    def ancestry(self):
-        del self.__section['ancestry']
+        return self.section.type
 
     @property
     def filter(self):
-        return get_property(self.__section, 'filter')
+        return get_property(self.section, 'filter')
 
     @filter.setter
     def filter(self, value):
-        set_property(self.__section, 'filter', value)
+        set_property(self.section, 'filter', value)
 
     @filter.deleter
     def filter(self):
-        del self.__section['filter']
+        del self.section['filter']
 
 
 class Position(Sequence):
