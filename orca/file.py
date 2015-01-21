@@ -82,7 +82,8 @@ class OrcaFile(object):
         section['orca_version'] = 0.2
         section['identifier'] = identifier
         section['experiment_start_time'] = experiment_start_time if experiment_start_time else time.ctime()
-        block = nix_file.create_block(identifier, 'orca.file')
+        block = nix_file.create_block(identifier, 'orca.session')
+        block.metadata = section
         return cls(nix_file, block, section)
 
     def __open_sequences(self, sequence_sections):
