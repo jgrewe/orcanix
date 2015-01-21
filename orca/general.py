@@ -387,7 +387,7 @@ class OrcaElectrical(object):
             array.extent = impedance.shape
             array.data = impedance
         else:
-            array = self.__block.create_data_array('impdeance', 'orca.electrical.impedance', data=impedance)
+            array = self.__block.create_data_array('impedance', 'orca.electrical.impedance', data=impedance)
             for _ in impedance.shape:
                 array.append_set_dimension()
             array.metadata = self.__section
