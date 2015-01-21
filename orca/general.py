@@ -7,84 +7,86 @@ from  util import *
 
 class OrcaGeneral(object):
     
-    def __init__(self, nix_file, nix_block, general_section):
+    def __init__(self, nix_file, nix_block):
         self.__block = nix_block
         self.__nix_file = nix_file
         self.__animals = {}
         self.__devices = {}
         self.__electricals = {}
-        self.__section = general_section
-        for s in find_sections(self.__section, 'orca.animal'):
+        for s in find_sections(self.__block.metadata, 'orca.animal'):
             self.__animals[s.name] = OrcaAnimal.open(s)
-        for s in find_sections(self.__section, 'orca.devices'):
+        for s in find_sections(self.__block.metadata, 'orca.devices'):
             self.__devices[s.name] = OrcaDevice.open(s)
-        for s in find_sections(self.__section, 'orca.electrical'):
+        for s in find_sections(self.__block.metadata, 'orca.electrical'):
             self.__electricals[s.name] = OrcaElectrical.open(self.__block, s)
 
     @classmethod
-    def open(cls, nix_file, nix_block, general_section):
-        return cls(nix_file, nix_block, general_section)
+    def open(cls, nix_file, nix_block):
+        if nix_block.metadata is None:
+          nix_block.metadata = nix_file.create_section(b.name, "orca.session") 
+        return cls(nix_file, nix_block)
 
     @classmethod
-    def new(cls, nix_file, nix_block, session_id):
-        secs = nix_file.find_sections(filtr=lambda x: 'session_id' in x.name, limit=1)
-        if len(secs) > 0:
-            section = secs[0]
-        else:
-            section = nix_file.create_section(session_id, 'orca.general')
-        return cls(nix_file, nix_block, section)
+    def new(cls, nix_file, session_id):
+        section = nix_file.create_section(session_id, "orca.session")
+        nix_block = nix_file.create_block(session_id, "orca.session")
+        nix_block.metadata = section
+        return cls(nix_file, nix_block)
+
+    def _block(self):
+        return self.__block
 
     @property
     def session_id(self):
-        return self.__section.name
+        return self.__block.name
         
     @property
     def experiment(self):
-        return get_property(self.__section, 'experiment')
+        return get_property(self.__block.metadata, 'experiment')
 
     @experiment.setter
     def experiment(self, value):
-        set_property(self.__section, 'experiment', value)
+        set_property(self.__block.metadata, 'experiment', value)
 
     @experiment.deleter
     def experiment(self):
-        del self.__section['experiment']
+        del self.__block.metadata['experiment']
 
     @property
     def lab(self):
-        return get_property(self.__section, 'lab')
+        return get_property(self.__block.metadata, 'lab')
 
     @lab.setter
     def lab(self, value):
-        set_property(self.__section, 'lab', value)
+        set_property(self.__block.metadata, 'lab', value)
 
     @lab.deleter
     def lab(self):
-        del self.__section['lab']
+        del self.__block.metadata['lab']
 
     @property
     def protocol(self):
-        return get_property(self.__section, 'protocol')
+        return get_property(self.__block.metadata, 'protocol')
 
     @protocol.setter
     def protocol(self, value):
-        set_property(self.__section, 'protocol', value)
+        set_property(self.__block.metadata, 'protocol', value)
 
     @protocol.deleter
     def protocol(self):
-        del self.__section['protocol']
+        del self.__block.metadata['protocol']
 
     @property
     def notes(self):
-        return get_property(self.__section, 'notes')
+        return get_property(self.__block.metadata, 'notes')
 
     @notes.setter
     def notes(self, value):
-        set_property(self.__section, 'notes', value)
+        set_property(self.__block.metadata, 'notes', value)
 
     @notes.deleter
     def notes(self):
-        del self.__section['notes']
+        del self.__block.metadata['notes']
 
     @property
     def animals(self):
@@ -92,7 +94,7 @@ class OrcaGeneral(object):
 
     def add_animal(self, animal_id):
         if animal_id not in self.__animals.keys():
-            self.__animals[animal_id] = OrcaAnimal.new(self.__section, animal_id)
+            self.__animals[animal_id] = OrcaAnimal.new(self.__block.metadata, animal_id)
         else:
             print("Animal with that id already exists in the file.")
 
@@ -102,7 +104,7 @@ class OrcaGeneral(object):
 
     def add_device(self, device_name):
         if device_name not in self.__devices.keys():
-            self.__devices[device_name] = OrcaDevice.new(self.__section, device_name)
+            self.__devices[device_name] = OrcaDevice.new(self.__block.metadata, device_name)
         else:
             print("Device with that name already exists in the file.")
 
@@ -112,7 +114,7 @@ class OrcaGeneral(object):
 
     def add_electrical(self, hardware):
         if hardware not in self.__electricals.keys():
-            self.__electricals[hardware] = OrcaElectrical.new(self.__block, self.__section, hardware)
+            self.__electricals[hardware] = OrcaElectrical.new(self.__block, self.__block.metadata, hardware)
         else:
             print("Electrical with that name already exists in the file.")
             
