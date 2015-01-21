@@ -53,7 +53,7 @@ class Position(Sequence):
         
     @classmethod
     def new(cls, nix_file, nix_block, name):
-        s = nix_file.create_section(name, 'orca.sequence.position')
+        s = nix_block.metadata.create_section(name, 'orca.sequence.position')
         return cls(nix_block, s)
 
     @classmethod
@@ -92,6 +92,7 @@ class Position(Sequence):
         dim.unit = 's'
         set_dim = self.__data_array.append_set_dimension()
         set_dim.labels = labels
+        self.__data_array.metadata = self.section
         # FIXME working with 2D (nD?) data
 
     @property
