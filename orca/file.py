@@ -141,7 +141,7 @@ class OrcaFile(object):
 
 if __name__ == '__main__':
     print('... create new file...')
-    of = OrcaFile.new('test.orca', 'test_session')
+    of = OrcaFile.new('test.orca', 'session_1')
     of.general_info = 'session_1'
     of.general_info.add_animal('animal_1')
     of.general_info.animals['animal_1'].species = 'C.  Elegans'
@@ -149,12 +149,13 @@ if __name__ == '__main__':
     of.general_info.add_device('Amplifier_1')
     of.general_info.devices['Amplifier_1'].model = 'Amplifier'
     of.general_info.devices['Amplifier_1'].attributes = {'a' : 100, 'b' : 200}
-    of.general_info.add_electrical('magic array')
-    of.general_info.electricals['magic array'].electrode_map = np.arange(10, 0.5)
-    epoch = of.add_epoch('test', 0.0, 10.2)
-    epoch.description = 'A test epoch'
+    of.general_info.add_electrical('electrode array')
+    of.general_info.electricals['electrode array'].electrode_map = np.arange(10, 0.5)
+    epoch = of.add_epoch('epoch_1', 0.0, 10.2)
+    epoch.description = 'An epoch in some data'
     epoch.ignore_intervals = [(0.0, 1.1), (1.5, 2.7), (7.5, 7.6)]
-    p = of.add_position_data('test data', np.random.randn(100, 2), ['x', 'y'], 100)
+    p = of.add_position_data('position data', np.random.randn(100, 2), ['x', 'y'], 100)
+    p.description = "description of the position data"
     embed()
     of.close()
     print('... close file!')
