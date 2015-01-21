@@ -16,25 +16,34 @@ import epochs as oe
 
 """
 FIXME:
- Unclear whether it is intended to have  more than one sessions in a single file?
 
- What is the difference between the file identifier and the session id?
+ Here are some comments/questions regaring the schema:
 
- How are links between entities established?
+    Unclear whether it is intended to have  more than one sessions in a single file?
 
- Naming of entities? So far only a few entities have names. If there are to be more than one, this is confusing.
+    What is the difference between the file identifier and the session id?
+
+    Naming of entities? So far only a few entities have names. If there are to be more than one, this is confusing.
 
  Positions:
-            Axis information is difficult. How should this be solved?
+            Axis information is difficult. How should this be solved? I put in the labels e.g. for x-position and y-position
+
             Unit of time axis always in seconds?
-            What about the other axes in the nD case?
-  Sequences in general:
+
+            Is it always a time axis?
+
+
+ Sequences in general:
             Sample rate and t_intervals can be contradictory/in conflict!
+
             Regarding the time information I would argue to define separate classes for the Neurolynx kind of data and
             regular as well as irregularly sampled data. If handled in the wrong way using the combination of
             timestamps, intervals and samplerate can easily lead to a terrible mess.
-            Conversion and resolution in Sequence appear redundant!
-            Not sure if I understand ancestry correctly. Handled this as the type of the sequence
+
+            Conversion and resolution in Sequence appear redundant.
+
+            Not sure if I understand ancestry correctly. Handled this as the type of the sequence. Is this the intended behavior?
+
 """
 
 
