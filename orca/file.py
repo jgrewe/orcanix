@@ -32,6 +32,9 @@ FIXME:
 
             Is it always a time axis?
 
+            Are the positions expected to work with nD or rather limited to 2D? So far implemented to work correctly with 2D
+
+            Ignore intervals are implemented as start and extents (the nix apporach) but the object takes and returns starts and ends.
 
  Sequences in general:
             Sample rate and t_intervals can be contradictory/in conflict!
