@@ -156,7 +156,7 @@ if __name__ == '__main__':
     of.session.devices['Amplifier_1'].model = 'Amplifier'
     of.session.devices['Amplifier_1'].attributes = {'a' : 100, 'b' : 200}
     of.session.add_electrical('electrode array')
-    of.session.electricals['electrode array'].electrode_map = np.arange(10, 0.5)
+    of.session.electricals['electrode array'].electrode_map = np.arange(0, 10, 0.5)
     epoch = of.add_epoch('epoch_1', 0.0, 10.2)
     epoch.description = 'An epoch in some data'
     epoch.ignore_intervals = [(0.0, 1.1), (1.5, 2.7), (7.5, 7.6)]
